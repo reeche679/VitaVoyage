@@ -1,42 +1,34 @@
 import streamlit as st
 from PIL import Image
-from streamlit_extras.switch_page_button import switch_page 
+from Homepage import set_page_background_image, create_navigation_bar
+
+# Page Config
+st.set_page_config(page_title="Get Started", page_icon = "logo.png" , layout="wide", initial_sidebar_state="collapsed")
 
 
+# Background Image
+set_page_background_image("get started background final.jpg")
 
-img = Image.open("398509074_359643179887697_4288406788630142671_n-removebg-preview.png")
-st.set_page_config(page_title="VitaVoyage!", page_icon = img , layout="wide")
-def local_css(file_name):
-    with open(file_name) as f:
-        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-
-
-
-local_css("style/style.css")
-
-# Load Animation
-animation_symbol = "❄"
-
+# Navigation Bar
+create_navigation_bar()
 st.markdown(
-    f"""
-    <div class="snowflake">{animation_symbol}</div>
-    <div class="snowflake">{animation_symbol}</div>
-    <div class="snowflake">{animation_symbol}</div>
-    <div class="snowflake">{animation_symbol}</div>
-    <div class="snowflake">{animation_symbol}</div>
-    <div class="snowflake">{animation_symbol}</div>
-    <div class="snowflake">{animation_symbol}</div>
-    <div class="snowflake">{animation_symbol}</div>
-    <div class="snowflake">{animation_symbol}</div>
+    """
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     """,
-    unsafe_allow_html=True,
-)
+    unsafe_allow_html=True)
+
+
+# Header 
+with open("style\style.css") as f:
+    st.markdown('<style>{}</style>'.format(f.read()), unsafe_allow_html=True)  
+
+path = "logo.png"
+image = Image.open(path)
+
 
 # Title
 
-
-
-st.title("‎‎‎ VitaVoyage")
+st.markdown('<p style="font-family: Forum; text-align: center; font-size: 5em; font-weight: bold;"> VitaVoyage: The Sky is Your Limit!</p>', unsafe_allow_html=True)
 st.divider()
 st.write(" ")
 st.write(" ")
@@ -71,6 +63,7 @@ with col1:
     calories_per_day = st.number_input("Average Calories Per Day", min_value=500, max_value=5000)
     bmi = st.number_input("BMI (Body Mass Index)", min_value=10, max_value=50)
     desired_body_type = st.selectbox("Desired Body Type", ["Lose Weight", "Build Muscle", "Maintain"])
+    
 # Define colors and messages based on desired body type
     color_mapping = {
         "Lose Weight": ("green", "Achieve a healthy weight through proper diet and exercise."),
@@ -88,49 +81,48 @@ with col1:
     else:
         st.write(selected_message)
 
-    # Health Records
-    st.header("Health Records:")
-    skip_health_records = st.button("Skip Health Records")
+#Sleep Duration
 
-    # Initialize variables
-    blood_pressure = None
-    heart_rate = None
-    sleep_duration = None
-
-    if not skip_health_records:
-        # Blood Pressure input with validation
-        blood_pressure = st.text_input("Blood Pressure (e.g., 120/80 mmHg)")
-        if blood_pressure and not any(char.isdigit() or char in ['/'] for char in blood_pressure):
-            st.warning("Please enter a valid blood pressure format (e.g., 120/80 mmHg)")
-            st.stop()
-
-        # Resting Heart Rate input with validation
-        heart_rate = st.number_input("Resting Heart Rate (bpm)", min_value=30, max_value=200)
-
-        # Average Sleep Duration input with validation
-        sleep_duration = st.number_input("Average Sleep Duration (hours)", min_value=1, max_value=24)
-
-with col2:
-    st.empty()
-
-# Recommendations (Right Column)
-with col3:
-    # Additional Health Tips
-    st.subheader("Health Records Tips:")
-    if blood_pressure:
-        st.write(f"- Monitor your blood pressure regularly. The provided value is {blood_pressure}.")
-    if heart_rate:
-        st.write(f"- Maintain a resting heart rate of {heart_rate} bpm for cardiovascular health.")
-    if sleep_duration:
-        st.write(f"- Aim for an average sleep duration of {sleep_duration} hours for overall well-being.")
-
-        # Check sleep duration for the average range
+    sleep_duration = st.number_input("Average Sleep Duration (hours)", min_value=1, max_value=24)
+      
+    if sleep_duration is not None:
         if sleep_duration < 6:
             st.warning("Your sleep duration is less than the recommended 6-8 hours. Consider adjusting your sleep routine.")
         elif sleep_duration > 8:
             st.warning("Your sleep duration is more than the recommended 6-8 hours. Ensure quality sleep and consider adjusting your sleep routine.")
         else:
             st.success("Great job! Your sleep duration is within the recommended 6-8 hours.")
+
+            
+    # Health Records
+    st.header("Additional Info")
+    skip_health_records = st.button("Skip")
+
+    # Initialize variables
+    blood_pressure = None
+    heart_rate = None
+    
+          # Check sleep duration for the average range
+                
+    if not skip_health_records:
+        # Blood Pressure input with validation
+        blood_pressure = st.text_input("Blood Pressure (e.g., 120/80 mmHg)")
+        if blood_pressure and not any(char.isdigit() or char in ['/'] for char in blood_pressure):
+            st.warning("Please enter a valid blood pressure format (e.g., 120/80 mmHg)")
+            st.stop()
+    
+        # Resting Heart Rate input with validation
+        heart_rate = st.number_input("Resting Heart Rate (bpm)", min_value=30, max_value=200)
+
+
+        # Average Sleep Duration input with validation
+        
+
+with col2:
+    st.empty()
+
+# Recommendations (Right Column)
+with col3:
     st.header("Recommendations:")
 
     # Meal Plan
@@ -224,6 +216,64 @@ st.write("Please consult with a healthcare or fitness professional before starti
 st.write("Always prioritize your health and well-being!")
 
 
-tailored_results = st.button("View tailored results")
-if tailored_results:
-    switch_page("View >>>")
+show_images_button = st.button("Show Sample Meal Plan")
+
+# Display images based on button click
+if show_images_button:
+    # Define image paths based on fitness level and body type
+    image_paths = {
+        ("Beginner", "Lose Weight"): "Images/begginer, lose weight.png",
+        ("Beginner", "Build Muscle"): "Images/beginner, build muscle.png",
+        ("Beginner", "Maintain"): "Images/begginer, maintain.png",
+        ("Intermediate", "Lose Weight"): "Images/Intermediate, Lose weight.png",
+        ("Intermediate", "Build Muscle"): "Images/Intermediate, build muscle.png",
+        ("Intermediate", "Maintain"): "Images/Intermediate, maintain.png",
+        ("Advance", "Lose Weight"): "Images/advance, lose weight.png",
+        ("Advance", "Build Muscle"): "Images/advance, build muscle.png",
+        ("Advance", "Maintain"): "Images/advance, maintain.png",
+        # Add more mappings as needed
+    }
+
+    # Get the selected image path
+    selected_image_path = image_paths.get((fitness_level, desired_body_type), "images/default_image.jpg")
+    
+    # Display the selected image
+    selected_image = Image.open(selected_image_path)
+    st.image(selected_image, caption=f"Image for {fitness_level} - {desired_body_type}", width=600)
+    
+    close_images_button = st.button("Close Images")
+
+    # Close the image display if the button is clicked
+    if close_images_button:
+        st.text("Images closed.")
+        st.experimental_rerun()
+# Dictionary mapping fitness_level and desired_body_type to video URLs
+video_urls = {
+    ("Beginner", "Lose Weight"): "https://www.youtube.com/watch?v=lS6qBCIVFws",
+    ("Beginner", "Build Muscle"): "https://www.youtube.com/watch?v=UadGwhOBjFA",
+    ("Beginner", "Maintain"): "https://www.youtube.com/watch?v=PG2f3GF5RlI",
+    ("Intermediate", "Lose Weight"): "https://www.youtube.com/watch?v=PtdOi8Y3oRQ",
+    ("Intermediate", "Build Muscle"): "https://www.youtube.com/watch?v=lA-diBuGy6I",
+    ("Intermediate", "Maintain"): "https://www.youtube.com/watch?v=PG2f3GF5RlI",
+    ("Advance", "Lose Weight"): "https://www.youtube.com/watch?v=b7YoGQuXYRE",
+    ("Advance", "Build Muscle"): "https://www.youtube.com/watch?v=tYDOvalJlpU",
+    ("Advance", "Maintain"): "https://www.youtube.com/watch?v=PG2f3GF5RlI",
+}
+
+# Get the selected video URL based on user input
+selected_video_url = video_urls.get((fitness_level, desired_body_type), "")
+
+# Button to show video
+show_video_button = st.button("Show Video")
+
+# Display video if button is clicked
+if show_video_button:
+    st.video(selected_video_url)
+
+    # Button to hide video
+    hide_video_button = st.button("Hide Video")
+
+    # Hide video if button is clicked
+    if hide_video_button:
+        st.empty()
+
